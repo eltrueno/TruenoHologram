@@ -92,23 +92,27 @@ public class TruenoHologram{
 			Location finalLoc = location.clone();
 			finalLoc.setY(location.getY()+(linesdistance*lines.size()));	        
 			if(this.player!=null){
-				if(ind>0) finalLoc = getNmsLocation(NmsArmorLines.get(ind-1)); finalLoc.setY(finalLoc.getY()-linesdistance);
-				WorldServer s = ((CraftWorld)this.location.getWorld()).getHandle();
-		        EntityArmorStand stand = new EntityArmorStand(s);   
-				NmsSpawn(stand, line, finalLoc);
-		        NmsArmorLines.add(stand);
+				if(line != ""){
+					if(ind>0) finalLoc = getNmsLocation(NmsArmorLines.get(ind-1)); finalLoc.setY(finalLoc.getY()-linesdistance);
+					WorldServer s = ((CraftWorld)this.location.getWorld()).getHandle();
+			        EntityArmorStand stand = new EntityArmorStand(s);   
+					NmsSpawn(stand, line, finalLoc);
+			        NmsArmorLines.add(stand);	
+				}
 			}
 			else{
-				if(ind>0) finalLoc = armor_lines.get(ind-1).getLocation(); finalLoc.setY(finalLoc.getY()-linesdistance);
-				ArmorStand Armorline = (ArmorStand) location.getWorld().spawnEntity(finalLoc, EntityType.ARMOR_STAND);
-				Armorline.setBasePlate(false);
-				Armorline.setCustomNameVisible(true);
-				Armorline.setGravity(false);
-				Armorline.setCanPickupItems(false);
-				Armorline.setCustomName(line);
-				Armorline.setSmall(true);
-				Armorline.setVisible(false);
-				armor_lines.add(Armorline);	
+				if(line != ""){
+					if(ind>0) finalLoc = armor_lines.get(ind-1).getLocation(); finalLoc.setY(finalLoc.getY()-linesdistance);
+					ArmorStand Armorline = (ArmorStand) location.getWorld().spawnEntity(finalLoc, EntityType.ARMOR_STAND);
+					Armorline.setBasePlate(false);
+					Armorline.setCustomNameVisible(true);
+					Armorline.setGravity(false);
+					Armorline.setCanPickupItems(false);
+					Armorline.setCustomName(line);
+					Armorline.setSmall(true);
+					Armorline.setVisible(false);
+					armor_lines.add(Armorline);	
+				}
 			}
 			ind++;
 		}
@@ -157,16 +161,24 @@ public class TruenoHologram{
 			for(String newline : lines){
 				if(this.lines.size()>= ind){
 					String oldline = this.lines.get(ind);
-					if(oldline != newline){
-						final EntityArmorStand oldstand = NmsArmorLines.get(ind);
-						Location finalLoc = location;
-						finalLoc.setY(location.getY()+(linesdistance*lines.size()));
-						if(ind>0) finalLoc = getNmsLocation(NmsArmorLines.get(ind-1)); finalLoc.setY(finalLoc.getY()-linesdistance);
-						WorldServer s = ((CraftWorld)this.location.getWorld()).getHandle();
-				        EntityArmorStand stand = new EntityArmorStand(s);   
-						NmsSpawn(stand, newline, finalLoc);
-						this.NmsArmorLines.set(ind, stand);
-						NmsDestroy(oldstand);
+					if(!newline.equals(oldline)){
+						if(!newline.equals("")){
+							final EntityArmorStand oldstand = NmsArmorLines.get(ind);
+							Location finalLoc = location.clone();
+							finalLoc.setY(location.getY()+(linesdistance*lines.size()));
+							if(ind>0) finalLoc = getNmsLocation(NmsArmorLines.get(ind-1)); finalLoc.setY(finalLoc.getY()-linesdistance);
+							WorldServer s = ((CraftWorld)this.location.getWorld()).getHandle();
+				        	EntityArmorStand stand = new EntityArmorStand(s);   
+							NmsSpawn(stand, newline, finalLoc);
+							this.NmsArmorLines.set(ind, stand);
+							this.lines.set(ind, newline);
+							NmsDestroy(oldstand);
+						}
+						else{
+							this.lines.set(ind, newline);
+							final EntityArmorStand oldstand = NmsArmorLines.get(ind);
+							NmsDestroy(oldstand);
+						}
 					}
 					ind++;
 				}
@@ -174,11 +186,11 @@ public class TruenoHologram{
 					Location finalLoc = location.clone();
 					finalLoc.setY(location.getY()+(linesdistance*lines.size()));
 					if(ind>0) finalLoc = getNmsLocation(NmsArmorLines.get(ind-1)); finalLoc.setY(finalLoc.getY()-linesdistance);
-			        WorldServer s = ((CraftWorld)this.location.getWorld()).getHandle();
-			        EntityArmorStand stand = new EntityArmorStand(s);   
+				    WorldServer s = ((CraftWorld)this.location.getWorld()).getHandle();
+				    EntityArmorStand stand = new EntityArmorStand(s);   
 					NmsSpawn(stand, newline, finalLoc);
-			        this.NmsArmorLines.add(stand);
-			        this.lines.add(newline);
+				    this.NmsArmorLines.add(stand);
+				    this.lines.add(newline);
 				}
 			}
 			if(lines.size() > this.lines.size()){
@@ -196,8 +208,15 @@ public class TruenoHologram{
 			for(String newline : lines){
 				if(this.lines.size()>= ind){
 					String oldline = this.lines.get(ind);
-					if(oldline != newline){
-						this.armor_lines.get(ind).setCustomName(newline);
+					if(!newline.equals(oldline)){
+						if(newline != ""){
+							this.armor_lines.get(ind).setCustomName(newline);
+						}
+						else{
+							this.lines.set(ind, newline);
+							final ArmorStand oldstand = armor_lines.get(ind);
+							oldstand.remove();
+						}
 					}
 					ind++;
 				}
@@ -239,20 +258,33 @@ public class TruenoHologram{
 		if(this.lines.size() >= index){
 			int realindex = (this.lines.size()-1)-index;
 			String oldtext = this.lines.get(realindex);
-			if(oldtext != text){
+			if(!text.equals(oldtext)){
 				if(this.player != null){
-					final EntityArmorStand oldstand = NmsArmorLines.get(realindex);
-					Location finalLoc = location.clone();
-					finalLoc.setY(location.getY()+(linesdistance*lines.size()));
-					if(realindex>0) finalLoc = getNmsLocation(NmsArmorLines.get(realindex-1)); finalLoc.setY(finalLoc.getY()-linesdistance);
-					WorldServer s = ((CraftWorld)this.location.getWorld()).getHandle();
-			        EntityArmorStand stand = new EntityArmorStand(s);   
-					NmsSpawn(stand, text, finalLoc);
-					this.NmsArmorLines.set(realindex, stand);
-					NmsDestroy(oldstand);
+					if(text != ""){
+						final EntityArmorStand oldstand = NmsArmorLines.get(realindex);
+						Location finalLoc = location.clone();
+						finalLoc.setY(location.getY()+(linesdistance*lines.size()));
+						if(realindex>0) finalLoc = getNmsLocation(NmsArmorLines.get(realindex-1)); finalLoc.setY(finalLoc.getY()-linesdistance);
+						WorldServer s = ((CraftWorld)this.location.getWorld()).getHandle();
+				        EntityArmorStand stand = new EntityArmorStand(s);   
+						NmsSpawn(stand, text, finalLoc);
+						this.NmsArmorLines.set(realindex, stand);
+						NmsDestroy(oldstand);
+					}
+					else{
+						this.lines.set(realindex, text);
+						final EntityArmorStand oldstand = NmsArmorLines.get(realindex);
+						NmsDestroy(oldstand);
+					}
 				}
 				else{
-					this.armor_lines.get(realindex).setCustomName(text);
+					if(text != ""){
+						this.armor_lines.get(realindex).setCustomName(text);
+					}
+					else{
+						final ArmorStand oldstand = armor_lines.get(realindex);
+						oldstand.remove();
+					}
 				}
 			 this.lines.set(realindex, text);
 			}
