@@ -12,8 +12,8 @@ public class Example {
 		//Create a new hologram visible to all the players.
 		TruenoHologram hologram = new  TruenoHologram(loc, lines);
 		
-		//Set distance between hologram lines. Default: 0.28
-		hologram.setDistanceBetweenLines(0.28);
+		//Set distance between hologram lines. Default: 0.30
+		hologram.setDistanceBetweenLines(0.30);
 		
 		//Display the hologram
 		hologram.Display();
