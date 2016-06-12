@@ -8,7 +8,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
@@ -82,8 +81,10 @@ public class TruenoHologram{
         stand.setInvisible(true);
         stand.setBasePlate(false);
         stand.setArms(false);
-        PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(stand);
-        ((CraftPlayer) this.player).getHandle().playerConnection.sendPacket(packet);
+        if(!line.equals("")){       	
+        	PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(stand);
+        	((CraftPlayer) this.player).getHandle().playerConnection.sendPacket(packet);
+        }
 	}
 	
 	private void spawn(){
@@ -92,16 +93,13 @@ public class TruenoHologram{
 			Location finalLoc = location.clone();
 			finalLoc.setY(location.getY()+(linesdistance*lines.size()));	        
 			if(this.player!=null){
-				if(line != ""){
 					if(ind>0) finalLoc = getNmsLocation(NmsArmorLines.get(ind-1)); finalLoc.setY(finalLoc.getY()-linesdistance);
 					WorldServer s = ((CraftWorld)this.location.getWorld()).getHandle();
 			        EntityArmorStand stand = new EntityArmorStand(s);   
 					NmsSpawn(stand, line, finalLoc);
-			        NmsArmorLines.add(stand);	
-				}
+			        NmsArmorLines.add(stand);		
 			}
 			else{
-				if(line != ""){
 					if(ind>0) finalLoc = armor_lines.get(ind-1).getLocation(); finalLoc.setY(finalLoc.getY()-linesdistance);
 					ArmorStand Armorline = (ArmorStand) location.getWorld().spawnEntity(finalLoc, EntityType.ARMOR_STAND);
 					Armorline.setBasePlate(false);
@@ -111,8 +109,8 @@ public class TruenoHologram{
 					Armorline.setCustomName(line);
 					Armorline.setSmall(true);
 					Armorline.setVisible(false);
-					armor_lines.add(Armorline);	
-				}
+					armor_lines.add(Armorline);
+					if(line.equals("")) Armorline.remove();
 			}
 			ind++;
 		}
