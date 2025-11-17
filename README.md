@@ -1,3 +1,6 @@
+![archived](https://img.shields.io/badge/status-archived-red)
+> 🚨 **This repository is archived and no longer receives maintenance**
+
 # TruenoHologram
 This is an API for create holograms on Bukkit/Spigot. Compatible between 1.8_R3 to 1.11_R1
 
